@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All-in-One Finance Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .calculator {
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>All-in-One Finance Calculator</h1> <!-- Loan EMI Calculator --> <div class="calculator">
+    <h2>Loan EMI Calculator</h2>
+    <label>Loan Amount (₹):</label>
+    <input id="loanAmount" type="number">
+    <label>Interest Rate (% per annum):</label>
+    <input id="loanRate" type="number">
+    <label>Tenure (years):</label>
+    <input id="loanTenure" type="number">
+    <button onclick="calculateEMI()">Calculate EMI</button>
+    <div class="result" id="emiResult"></div>
+  </div> <!-- Tax Bracket Calculator (USA) --> <div class="calculator">
+    <h2>US Tax Bracket Estimator</h2>
+    <label>Annual Income ($):</label>
+    <input id="income" type="number">
+    <button onclick="calculateTax()">Estimate Tax Bracket</button>
+    <div class="result" id="taxResult"></div>
+  </div> <!-- Credit Card Payoff Calculator --> <div class="calculator">
+    <h2>Credit Card Payoff Calculator</h2>
+    <label>Balance ($):</label>
+    <input id="ccBalance" type="number">
+    <label>Monthly Payment ($):</label>
+    <input id="ccPayment" type="number">
+    <label>Interest Rate (% per annum):</label>
+    <input id="ccRate" type="number">
+    <button onclick="calculateCCPayoff()">Estimate Payoff Time</button>
+    <div class="result" id="ccResult"></div>
+  </div> <!-- Life Insurance Premium Calculator --> <div class="calculator">
+    <h2>Life Insurance Premium Estimator</h2>
+    <label>Age:</label>
+    <input id="age" type="number">
+    <label>Sum Assured (₹):</label>
+    <input id="sumAssured" type="number">
+    <label>Policy Term (years):</label>
+    <input id="policyTerm" type="number">
+    <button onclick="calculatePremium()">Estimate Premium</button>
+    <div class="result" id="premiumResult"></div>
+  </div> <script>
+    function calculateEMI() {
+      const P = parseFloat(document.getElementById('loanAmount').value);
+      const R = parseFloat(document.getElementById('loanRate').value) / 12 / 100;
+      const N = parseInt(document.getElementById('loanTenure').value) * 12;
+      const emi = P * R * Math.pow(1 + R, N) / (Math.pow(1 + R, N) - 1);
+      document.getElementById('emiResult').innerText = isNaN(emi) ? 'Enter valid values.' : `Monthly EMI: ₹${emi.toFixed(2)}`;
+    }
+
+    function calculateTax() {
+      const income = parseFloat(document.getElementById('income').value);
+      let bracket = 'Unknown';
+      if (income < 11600) bracket = '10%';
+      else if (income < 47150) bracket = '12%';
+      else if (income < 100525) bracket = '22%';
+      else if (income < 191950) bracket = '24%';
+      else if (income < 243725) bracket = '32%';
+      else if (income < 609350) bracket = '35%';
+      else bracket = '37%';
+      document.getElementById('taxResult').innerText = isNaN(income) ? 'Enter valid income.' : `Estimated Tax Bracket: ${bracket}`;
+    }
+
+    function calculateCCPayoff() {
+      const balance = parseFloat(document.getElementById('ccBalance').value);
+      const monthlyPayment = parseFloat(document.getElementById('ccPayment').value);
+      const rate = parseFloat(document.getElementById('ccRate').value) / 12 / 100;
+      if (monthlyPayment <= balance * rate) {
+        document.getElementById('ccResult').innerText = 'Payment too low to cover interest.';
+        return;
+      }
+      let months = 0;
+      let currentBalance = balance;
+      while (currentBalance > 0 && months < 600) {
+        const interest = currentBalance * rate;
+        currentBalance = currentBalance + interest - monthlyPayment;
+        months++;
+      }
+      const years = (months / 12).toFixed(1);
+      document.getElementById('ccResult').innerText = isNaN(months) ? 'Invalid input.' : `Payoff Time: ${months} months (${years} years)`;
+    }
+
+    function calculatePremium() {
+      const age = parseInt(document.getElementById('age').value);
+      const sumAssured = parseFloat(document.getElementById('sumAssured').value);
+      const term = parseInt(document.getElementById('policyTerm').value);
+      if (age < 18 || age > 65) {
+        document.getElementById('premiumResult').innerText = 'Age should be between 18 and 65.';
+        return;
+      }
+      const baseRate = 0.0005 + (age - 18) * 0.0001;
+      const premium = sumAssured * baseRate * term;
+      document.getElementById('premiumResult').innerText = isNaN(premium) ? 'Invalid input.' : `Estimated Annual Premium: ₹${premium.toFixed(2)}`;
+    }
+  </script></body>
+</html>
